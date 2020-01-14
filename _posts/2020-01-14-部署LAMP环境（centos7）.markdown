@@ -1,7 +1,3 @@
-# 部署LAMP环境（centos7）
-
-* * *
-
 本教程介绍如何使用云服务器ECS实例搭建LAMP平台，其中LAMP分别代表Linux、Apache、MySQL和PHP。
 
 使用本教程进行操作前，请确保您已经注册了阿里云账号。如还未注册，请先完成[账号注册](https://account.alibabacloud.com/register/intl_register.htm)。
