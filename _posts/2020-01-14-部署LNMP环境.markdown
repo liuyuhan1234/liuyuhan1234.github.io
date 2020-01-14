@@ -1,3 +1,11 @@
+---
+layout: post
+title:  "部署LNMP环境"
+date:   2020-01-14 21:03:37 +0530
+categories: 阿里云 Linux
+
+---
+
 本篇教程在示例步骤中使用了以下版本的软件：
 
 -   操作系统：公共镜像 CentOS 7.2 64位
