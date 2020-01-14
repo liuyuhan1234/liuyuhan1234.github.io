@@ -1,0 +1,46 @@
+---
+layout: post
+title:  "安装Git"
+date:   2020-01-05 20:03:35 +0530
+categories:  Git
+
+---
+
+## Linux
+要在您选择的Linux发行版上安装Git，此过程可能会略有不同。大多数发行版在其主要软件存储库中都包含Git。它必须通过软件包管理器进行安装。
+
+但是目前，环境是Ubuntu Linux，因此我们将练习在Ubuntu系统上安装Git。
+
+3.1.1 Ubuntu / Debian系统所有必需的Git软件包都可以通过访问apt-get。打开右侧的Xfce终端并执行以下命令：
+```Bash
+$ sudo apt-get update
+$ sudo apt-get install git
+```
+如果您有兴趣，这里是在其他系统上安装Git的方法。完成本实验后，您可以在本地环境中试用它们。
+
+## Windows
+
+幸运的是，近年来，通过自动安装，在Windows机器上安装Git变得更加容易。也可以选择将安装和使用Git的环境（即，通过命令提示符或新安装的名为Git Bash的外壳程序的Git）。这个决定完全取决于用户。
+
+请从官方网站的Git安装程序文件在[这里](https://git-scm.com/download/win)。运行安装程序，并按照Git设置向导中出现的提示进行操作。根据您的安装选择，从Windows命令提示符或Git Bash使用Git 。
+
+## Mac OS
+
+在运行Mac OS X的计算机上可以通过多种方式安装Git。本教程仅介绍其中两种。默认情况下，Git通常随各种Mac OS X软件一起安装，因此请确保检查它是否尚未安装在您的机器上（如前所述）。
+
+#### 使用Mac的Git安装程序
+到目前为止，这是在Mac OS X上通过安装程序安装Git的最简单方法：
+
+* 请从官方网站的Git安装程序文件在这里。
+* 运行安装程序，然后按照提示在系统上安装Git
+
+#### 通过自制软件安装Git
+这种Git安装方法适用于在其计算机上安装了Homebrew软件包管理器的Mac OS X用户：
+
+* 打开一个终端。
+* 通过执行以下命令来安装Git。
+```
+brew install git
+```
+#### 从源代码构建Git
+可以直接从源代码构建Git。这也需要安装许多依赖项。从源代码构建Git的过程超出了本课程的范围。
