@@ -1,0 +1,113 @@
+---
+layout: post
+title:  "CSP字符串匹配"
+date:   2020-01-14 21:03:37 +0530
+categories:  CSP C++
+
+---
+
+**问题描述**
+　　给出一个字符串和多行文字，在这些文字中找到字符串出现的那些行。
+  你的程序还需支持大小写敏感选项：
+  当选项打开时，表示同一个字母的大写和小写看作不同的字符；
+  当选项关闭时，表示同一个字母的大写和小写看作相同的字符。
+
+**输入格式**
+　　输入的第一行包含一个字符串S，由大小写英文字母组成。
+　　第二行包含一个数字，表示大小写敏感的选项，当数字为0时表示大小写不敏感，当数字为1时表示大小写敏感。
+　　第三行包含一个整数n，表示给出的文字的行数。
+　　接下来n行，每行包含一个字符串，字符串由大小写英文字母组成，不含空格和其他字符。
+
+**输出格式**
+　　输出多行，每行包含一个字符串，按出现的顺序依次给出那些包含了字符串S的行。
+
+**样例输入**
+Hello
+1
+5
+HelloWorld
+HiHiHelloHiHi
+GrepIsAGreatTool
+HELLO
+HELLOisNOTHello
+
+**样例输出**
+HelloWorld
+HiHiHelloHiHi
+HELLOisNOTHello
+
+**样例说明**
+　　在上面的样例中，第四个字符串虽然也是Hello，但是大小写不正确。如果将输入的第二行改为0，则第四个字符串应该输出。
+评测用例规模与约定
+　　1<=n<=100，每个字符串的长度不超过100。
+
+
+## 解答C++
+#### 思路
+问题分析：
+
+  这是一个简单的字符串处理问题，有两种方法实现，一是使用字符串有关的库函数实现，其关键是对有关字符串处理函数是否熟悉；二是使用KMP算法实现。
+
+程序说明：
+
+  **方法一：库函数**
+
+  有关字符串的处理，可以用C语言的函数实现，也可用C++的string变量实现。
+
+  在gcc环境中，不支持函数strlwr()，所以需要自己写一个函数mystrlwr()，在Dev-C++环境中，是支持函数strlwr()的，不需要自己写该函数，上述的函数mystrlwr()可以直接写为strlwr()。
+
+  **方法二：KMP算法实现**
+
+
+
+
+```c++
+
+/* CCF201409-3 字符串匹配 */
+
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+const int N = 100;
+
+void mystrlwr(char *ps)
+{
+    while(*ps) {
+        if('A' <= *ps && *ps <= 'Z')
+            *ps += 'a'-'A';
+        ps++;
+    }
+}
+
+int main()
+{
+    char key[N+1], s[N+1], lowerkey[N+1], lowers[N+1];
+    int option, n;
+
+    // 输入数据
+    cin >> key >> option >> n;
+
+    // 获得key的小写字符串，放在变量lowerkey中
+    strcpy(lowerkey, key);
+    mystrlwr(lowerkey);
+
+    // 循环处理
+    for(int i=1; i<=n; i++) {
+        cin >> s;
+
+        if(option == 0) {   // 大小写无关
+            strcpy(lowers, s);
+            mystrlwr(lowers);
+
+            if(strstr(lowers, lowerkey))
+                cout << s << endl;
+        } else { // option = 1，大小写有关
+            if(strstr(s, key))
+                cout << s << endl;
+        }
+    }
+}
+
+```
