@@ -1,0 +1,248 @@
+---
+layout: post
+title:  "Linux磁盘分配项目"
+date:   2020-01-14 21:03:37 +0530
+categories:  Linux
+
+---
+
+>**ssh工具**：Termius
+>**虚拟机**：vmware 14
+>**Markdown编辑器**：印象笔记 & Typora
+
+### Linux设置网卡开机启动
+1. 进入终端
+```
+cd /etc/sysconfig/network-scripts
+```
+2. vi打开对应网卡配置文件，centos默认网卡为ens33，其它系统大多为enth0
+```
+vi ifcfg-ens33
+```
+3. 将ONBOOT=no改为ONBOOT=yes
+wq保存
+
+4. 重启系统，你将发现网卡已随开机启动
+
+### 配置系统磁盘60GB+存储盘10GB
+1. 执行``` fdisk -l ```查看新添加的硬盘，可以看到 sdb为新添加的硬盘。
+
+2. ```fdisk /dev/sdb```对新加硬盘格式化
+
+3. 输入m可以查看帮助
+
+4. 输入n新建分区，输入p新建主分区，输入1（主分区号），分别磁盘分区的起始终止位置，这里采用默认，即分区为硬盘大小。
+
+5. 输入w对分区进行保存
+
+6. ```fdisk -l ```查看分区，有了sdb1 ;
+7. 输入```mkfs.ext4```将分区格式化为ext4格式
+8. 编辑/etc/fstab ，在最下面添加：
+/dev/sdb1              /app                     ext4    defaults        0 0
+使得磁盘开机挂载到/app目录
+
+### 修改内核fstab，对根目录开启磁盘配额限制
+```
+vim /etc/fstab 
+```
+![16619a49f59ebe1dec7dbcf8fdd71ca7.jpeg](en-resource://database/4201:1)
+
+标出来的地方就是需要新增的地方，这个表示是对根目录进行磁盘配额限制，当然，也可以加在其他行，则是对其他的目录进行磁盘配额限制。
+
+### 查看目录挂载位置
+```
+df -h
+```
+![e410bfc908adf244646e83b0c013a489.png](en-resource://database/4203:1)
+
+### 重新挂载根目录分区，内核重新读取/etc/fstab文件
+```
+mount -o remount /app
+mount | grep quota
+```
+![6ebf3f61af3f8bf801006ea1dbc5acc9.png](en-resource://database/4205:1)
+
+### 安装quota
+```
+yum install quota
+```
+
+### 通过quotacheck命令在根目录下生成quota配置文件
+```
+quotacheck -cugm /dev/sdb1
+ll / | grep quota
+```
+![dfc7e7a7abc8a3257fd4dba76fb70afe.png](en-resource://database/4207:1)
+
+### 启动磁盘配额
+```
+quotaon /dev/sdb1
+```
+
+### 在/app/data创建用户
+```
+mkdir thenewuser #记得更改文件权限
+cp .bash_logout  .bash_profil  .bashrc /app/data/thenewuser
+useradd -m -d /app/data/thenewuser thenewuser
+```
+
+### 对用户开启
+```
+edquota -u thenewuser
+```
+
+### 模拟大文件写入
+```
+dd if=/dev/zero of=file1 bs=1M count=400  #未超上限，无报错
+dd if=/dev/zero of=file2 bs=1M count=550  #报错
+```
+
+
+### 查看磁盘使用情况
+```
+repquota /dev/sdb1
+```
+![13ba92a7a5488b2dd1b1c0849a753bff.png](en-resource://database/4209:1)
+
+
+
+
+### 用户情况
+现在有5个新建用户：
+
+| 用户名          | 占用空间 | 密码     |
+| --------------- | -------- | -------- |
+| root            | \        | liuyuhan |
+| thenewuser      | 0 MB     | 123      |
+| thenormaluser   | 250MB    | 123      |
+| theoveruseduser | 0MB      | 123      |
+| rugbadmin       | \        | 456      |
+| centosadmin     | \        | 789      |
+
+### 脚本正文
+``` shell
+
+#!/bin/bash
+#userlist=cat /etc/passwd | awk 'BEGIN {FS=":"}{print $1}'
+TEXT1=`cat "/etc/passwd"`
+
+DATE=`date "+%Y-%m-%d_%H-%M"`
+
+echo $DATE > /app/test.txt
+USERNUMBER=`wc -l /etc/passwd|cut -d' ' -f1`
+echo $USERNUMBER
+USERALLLIST=`echo "$TEXT1" | awk 'BEGIN {FS=":"}{print $1}'`
+
+echo $USERALLLIST
+echo "********************************************************************************************************"
+for((i=1;i<=$USERNUMBER;i++));do
+    echo "这是第 $i 个用户";
+    FORUSER=`cut -d: -f1 /etc/passwd | head -$i | tail -1`
+    echo $FORUSER
+    UFORUSER=$(echo $FORUSER | tr '[a-z]' '[A-Z]')
+    echo $UFORUSER
+    #CHECKFULLUSER=`repquota /dev/sdb1 | grep $FORUSER | tr -s ' ' |cut -d ' ' -f1`
+    CHECKFULLUSED=`repquota /dev/sdb1 | grep $FORUSER | tr -s ' ' |cut -d ' ' -f3`
+    CHECKFULLUSED=${CHECKFULLUSED:=0} #若 num 为空或未设置时，则 num 设为值 0
+    #echo $CHECKFULLUSER
+    echo $CHECKFULLUSED
+    if [ $CHECKFULLUSED -eq 500000 ]
+    then
+       echo "over used"
+       mkdir overuseddata-$FORUSER
+       mv ./overuseddata-$FORUSER /app/overuseddata
+       mv /app/data/$FORUSER/* /app/overuseddata/overuseddata-$FORUSER  #移动所有滥用文件到overuseddata（不包括隐藏的配置文件）
+
+       tar -czvf $UFORUSER-$DATE.tar.gz /app/overuseddata/overuseddata-$FORUSER
+       find /app -name $UFORUSER-$DATE.tar.gz -exec mv {}  /app/overuseddata \;
+       rm -Rf /app/overuseddata/overuseddata-$FORUSER
+       echo "文件已移动"    
+    elif [ $CHECKFULLUSED -gt 500000 ]
+    then
+       echo "over used"
+       mkdir overuseddata-$FORUSER
+       mv ./overuseddata-$FORUSER /app/overuseddata
+       mv /app/data/$FORUSER/* /app/overuseddata/overuseddata-$FORUSER  #移动所有滥用文件到overuseddata（不包括隐藏的配置文件）
+
+       tar -czvf $UFORUSER-$DATE.tar.gz /app/overuseddata/overuseddata-$FORUSER
+       find /app -name $UFORUSER-$DATE.tar.gz -exec mv {}  /app/overuseddata \;
+       rm -Rf /app/overuseddata/overuseddata-$FORUSER
+       echo "文件已移动" 
+    else
+       echo "used well"
+    fi
+done;
+```
+
+### 创建用户rugbadmin
+``` python
+adduser --system --no-create-home -s /sbin/nologin rugbadmin
+```
+
+### crontab
+```
+systemctl restart crond #重启crontab
+```
+
+
+### vim /etc/crontab #编辑全局crontab
+```
+
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+HOME = /app
+# For details see man 4 crontabs
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+*/1 * * * * rugbadmin sudo sh /app/rugbadminshell.sh
+~                                                                                                                                        
+~                                                                                                                                        
+~                                                                                                                                        
+~                                                                                                                                        
+~                                                                   
+```
+
+### sudo密码超时时间
+
+Centos 没有默认超时时间，所以用一次sudo就需要输入密码。
+```
+visudo
+```
+添加下面的内容，2表示分钟数（看自己需求更改）。
+```
+Defaults timestamp_timeout=2
+```
+设置为0表示永远提示输入密码，设置为负数的话（译注，原文是”-1“，但是手册中写明只要是负数就可以）只需要证明一次你知道密码就可以（译注：就是密码永不过期）。
+如果永远不想提示输入密码，那就再添加sudo用户的时候添加NOPASSWD参数testuser ALL=(ALL) NOPASSWD: ALL
+
+
+### 创建管理员centosadmin用来帮助用户恢复数据
+
+赋予sudo权限 visudo
+```
+centosadmin ALL=(ALL) /usr/bin/mv
+centosadmin ALL=(ALL) /usr/bin/chown
+```
+
+### AWK
+
+写进了脚本
+
+### SSH
+
+1.只允许指定用户进行登录（白名单）：
+在 /etc/ssh/sshd_config 配置文件中设置 AllowUsers 选项，（配置完成需要重启 SSHD 服务）格式如下：
+```
+AllowUsers    centosadmin
+
+
+PermitRootLogin no
+```
