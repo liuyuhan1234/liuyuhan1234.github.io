@@ -1,6 +1,6 @@
-title: Your awesome title
-author: GitHub User
-email: your-email@domain.com
+title: 刘宇涵的个人博客
+author: 刘宇涵
+email: lyhgz@outlook.com
 description: > # this means to ignore newlines until "show_exerpts:"
   Write an awesome description for your new site here. You can edit this
   line in _config.yml. It will appear in your document head meta (for
@@ -16,6 +16,7 @@ plainwhite:
   tagline: software engineer
   date_format: "%b %-d, %Y"
   sitemap: true # set to true to generate sitemap.xml content
+  disqus_shortname: games
   navigation:
     - title: My Work
       url: "/my-work"
