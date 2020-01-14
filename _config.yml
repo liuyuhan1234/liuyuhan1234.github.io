@@ -12,15 +12,15 @@ show_excerpts: true # set to true to show excerpts on the homepage
 sass:
   sass_dir: _sass
 plainwhite:
-  name: Adam Denisov
-  tagline: Developer. Designer
+  name: 刘宇涵
+  tagline: software engineer
   date_format: "%b %-d, %Y"
   sitemap: true # set to true to generate sitemap.xml content
 
   # generate social links in footer
   social_links:
     twitter: thelehhman
-    github:  thelehhman
+    github:  https://github.com/liuyuhan1234
     linkedIn: in/thelehhman
     rss: rss
     # dribbble: jekyll
