@@ -1,0 +1,540 @@
+---
+layout: post
+title:  "Numpy数据分析练习"
+date:   2020-01-19 21:20:37 +0530
+categories: Numpy Python
+
+---
+### 1、导入numpy作为np，并查看版本
+
+**难度等级：**L1
+**问题：**将numpy导入为 ``np`` 并打印版本号。
+**答案：**
+
+```python
+import numpy as np
+print(np.__version__)
+# > 1.13.3
+```
+
+你必须将numpy导入np，才能使本练习中的其余代码正常工作。
+
+要安装numpy，建议安装anaconda，里面已经包含了numpy。
+
+### 2、如何创建一维数组？
+
+**难度等级：**L1
+**问题：**创建从0到9的一维数字数组
+
+**期望输出：**
+```python
+# > array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+
+**答案：**
+```python
+arr = np.arange(10)
+arr
+# > array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+
+### 3. 如何创建一个布尔数组？
+
+**难度等级：**L1
+
+**问题：**创建一个numpy数组元素值全为True（真）的数组
+
+**答案：**
+
+```python
+np.full((3, 3), True, dtype=bool)
+# > array([[ True,  True,  True],
+# >        [ True,  True,  True],
+# >        [ True,  True,  True]], dtype=bool)
+
+# Alternate method:
+np.ones((3,3), dtype=bool)
+```
+
+### 4. 如何从一维数组中提取满足指定条件的元素？
+**难度等级：**L1
+
+**问题：**从 arr 中提取所有的奇数
+
+**给定：**
+
+```python
+arr = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+
+**期望的输出：**
+
+```python
+# > array([1, 3, 5, 7, 9])
+```
+
+**答案：**
+
+```python
+# Input
+arr = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+# Solution
+arr[arr % 2 == 1]
+# > array([1, 3, 5, 7, 9])
+```
+
+### 5. 如何用numpy数组中的另一个值替换满足条件的元素项？
+**难度等级：**L1
+
+**问题：**将arr中的所有奇数替换为-1。
+
+**给定：**
+
+```python
+arr = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+
+**期望的输出：**
+```python
+# >  array([ 0, -1,  2, -1,  4, -1,  6, -1,  8, -1])
+```
+
+**答案：**
+```python
+arr[arr % 2 == 1] = -1
+arr
+# > array([ 0, -1,  2, -1,  4, -1,  6, -1,  8, -1])
+```
+
+### 6. 如何在不影响原始数组的情况下替换满足条件的元素项？
+**难度等级：**L2
+
+**问题：**将arr中的所有奇数替换为-1，而不改变arr。
+
+**给定：**
+```python
+arr = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+
+**期望的输出：**
+
+```python
+out
+# >  array([ 0, -1,  2, -1,  4, -1,  6, -1,  8, -1])
+arr
+# >  array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+
+**答案：**
+
+```python
+arr = np.arange(10)
+out = np.where(arr % 2 == 1, -1, arr)
+print(arr)
+out
+# > [0 1 2 3 4 5 6 7 8 9]
+array([ 0, -1,  2, -1,  4, -1,  6, -1,  8, -1])
+```
+
+### 7. 如何改变数组的形状？
+**难度等级：**L1
+
+**问题：**将一维数组转换为2行的2维数组
+
+**给定：**
+
+```python
+np.arange(10)
+
+# > array([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+```
+
+**期望的输出：**
+
+```
+# > array([[0, 1, 2, 3, 4],
+# >        [5, 6, 7, 8, 9]])
+```
+
+**答案：**
+```python
+arr = np.arange(10)
+arr.reshape(2, -1)  # Setting to -1 automatically decides the number of cols
+# > array([[0, 1, 2, 3, 4],
+# >        [5, 6, 7, 8, 9]])
+```
+
+### 8. 如何垂直叠加两个数组？
+
+**难度等级：**L2
+
+**问题：**垂直堆叠数组a和数组b
+
+**给定：**
+
+```python
+a = np.arange(10).reshape(2,-1)
+b = np.repeat(1, 10).reshape(2,-1)
+```
+
+**期望的输出：**
+
+```python
+# > array([[0, 1, 2, 3, 4],
+# >        [5, 6, 7, 8, 9],
+# >        [1, 1, 1, 1, 1],
+# >        [1, 1, 1, 1, 1]])
+```
+
+**答案：**
+
+```python
+a = np.arange(10).reshape(2,-1)
+b = np.repeat(1, 10).reshape(2,-1)
+
+# Answers
+# Method 1:
+np.concatenate([a, b], axis=0)
+
+# Method 2:
+np.vstack([a, b])
+
+# Method 3:
+np.r_[a, b]
+# > array([[0, 1, 2, 3, 4],
+# >        [5, 6, 7, 8, 9],
+# >        [1, 1, 1, 1, 1],
+# >        [1, 1, 1, 1, 1]])
+```
+### 9. 如何水平叠加两个数组？
+**难度等级：**L2
+
+**问题：**将数组a和数组b水平堆叠。
+
+**给定：**
+
+```python
+a = np.arange(10).reshape(2,-1)
+
+b = np.repeat(1, 10).reshape(2,-1)
+```
+
+**期望的输出：**
+
+```python
+# > array([[0, 1, 2, 3, 4, 1, 1, 1, 1, 1],
+# >        [5, 6, 7, 8, 9, 1, 1, 1, 1, 1]])
+```
+
+**答案：**
+
+```python
+a = np.arange(10).reshape(2,-1)
+b = np.repeat(1, 10).reshape(2,-1)
+
+# Answers
+# Method 1:
+np.concatenate([a, b], axis=1)
+
+# Method 2:
+np.hstack([a, b])
+
+# Method 3:
+np.c_[a, b]
+# > array([[0, 1, 2, 3, 4, 1, 1, 1, 1, 1],
+# >        [5, 6, 7, 8, 9, 1, 1, 1, 1, 1]])
+```
+
+### 10. 如何在无硬编码的情况下生成numpy中的自定义序列？
+**难度等级：**L2
+
+**问题：**创建以下模式而不使用硬编码。只使用numpy函数和下面的输入数组a。
+
+**给定：**
+
+```python
+a = np.array([1,2,3])`
+```
+
+**期望的输出：**
+
+```python
+# > array([1, 1, 1, 2, 2, 2, 3, 3, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3])
+```
+
+**答案：**
+
+```python
+np.r_[np.repeat(a, 3), np.tile(a, 3)]
+# > array([1, 1, 1, 2, 2, 2, 3, 3, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3])
+```
+
+### 11. 如何获取两个numpy数组之间的公共项？
+**难度等级：**L2
+
+**问题：**获取数组a和数组b之间的公共项。
+
+**给定：**
+
+```python
+a = np.array([1,2,3,2,3,4,3,4,5,6])
+b = np.array([7,2,10,2,7,4,9,4,9,8])
+```
+
+**期望的输出：**
+
+```python
+array([2, 4])
+```
+
+**答案：**
+
+```python
+a = np.array([1,2,3,2,3,4,3,4,5,6])
+b = np.array([7,2,10,2,7,4,9,4,9,8])
+np.intersect1d(a,b)
+# > array([2, 4])
+```
+
+### 12. 如何从一个数组中删除存在于另一个数组中的项？
+**难度等级：**L2
+
+**问题：**从数组a中删除数组b中的所有项。
+
+**给定：**
+
+```python
+a = np.array([1,2,3,4,5])
+b = np.array([5,6,7,8,9])
+```
+
+**期望的输出：**
+
+```python
+array([1,2,3,4])
+```
+
+**答案：**
+
+```python
+a = np.array([1,2,3,4,5])
+b = np.array([5,6,7,8,9])
+
+# From 'a' remove all of 'b'
+np.setdiff1d(a,b)
+# > array([1, 2, 3, 4])
+```
+
+### 13. 如何得到两个数组元素匹配的位置？
+**难度等级：**L2
+
+**问题：**获取a和b元素匹配的位置。
+
+**给定：**
+
+```python
+a = np.array([1,2,3,2,3,4,3,4,5,6])
+b = np.array([7,2,10,2,7,4,9,4,9,8])
+```
+
+**期望的输出：**
+
+```python
+# > (array([1, 3, 5, 7]),)
+```
+
+**答案：**
+```python
+a = np.array([1,2,3,2,3,4,3,4,5,6])
+b = np.array([7,2,10,2,7,4,9,4,9,8])
+
+np.where(a == b)
+# > (array([1, 3, 5, 7]),)
+```
+
+### 14. 如何从numpy数组中提取给定范围内的所有数字？
+**难度等级：**L2
+
+**问题：**获取5到10之间的所有项目。
+
+**给定：**
+
+```python
+a = np.array([2, 6, 1, 9, 10, 3, 27])
+```
+
+**期望的输出：**
+
+```python
+(array([6, 9, 10]),)
+```
+
+**答案：**
+
+```python
+a = np.arange(15)
+
+# Method 1
+index = np.where((a >= 5) & (a <= 10))
+a[index]
+
+# Method 2:
+index = np.where(np.logical_and(a>=5, a<=10))
+a[index]
+# > (array([6, 9, 10]),)
+
+# Method 3: (thanks loganzk!)
+a[(a >= 5) & (a <= 10)]
+```
+
+### 15. 如何创建一个python函数来处理scalars并在numpy数组上工作？
+**难度等级：**L2
+
+**问题：**转换适用于两个标量的函数maxx，以处理两个数组。
+
+**给定：**
+
+```python
+def maxx(x, y):
+    """Get the maximum of two items"""
+    if x >= y:
+        return x
+    else:
+        return y
+
+maxx(1, 5)
+# > 5
+```
+
+**期望的输出：**
+
+```python
+a = np.array([5, 7, 9, 8, 6, 4, 5])
+b = np.array([6, 3, 4, 8, 9, 7, 1])
+pair_max(a, b)
+# > array([ 6.,  7.,  9.,  8.,  9.,  7.,  5.])
+```
+
+**答案：**
+
+```python
+def maxx(x, y):
+    """Get the maximum of two items"""
+    if x >= y:
+        return x
+    else:
+        return y
+
+pair_max = np.vectorize(maxx, otypes=[float])
+
+a = np.array([5, 7, 9, 8, 6, 4, 5])
+b = np.array([6, 3, 4, 8, 9, 7, 1])
+
+pair_max(a, b)
+# > array([ 6.,  7.,  9.,  8.,  9.,  7.,  5.])
+```
+
+### 16. 如何交换二维numpy数组中的两列？
+
+**难度等级：**L2
+
+**问题：**在数组arr中交换列1和2。
+
+**给定：**
+
+```python
+arr = np.arange(9).reshape(3,3)
+arr
+```
+
+**答案：**
+
+```python
+# Input
+arr = np.arange(9).reshape(3,3)
+arr
+
+# Solution
+arr[:, [1,0,2]]
+# > array([[1, 0, 2],
+# >        [4, 3, 5],
+# >        [7, 6, 8]])
+```
+
+### 17. 如何交换二维numpy数组中的两行？
+**难度等级：**L2
+
+**问题：**交换数组arr中的第1和第2行：
+
+**给定：**
+
+```python
+arr = np.arange(9).reshape(3,3)
+arr
+```
+
+**答案：**
+
+```python
+# Input
+arr = np.arange(9).reshape(3,3)
+
+# Solution
+arr[[1,0,2], :]
+# > array([[3, 4, 5],
+# >        [0, 1, 2],
+# >        [6, 7, 8]])
+```
+
+### 18. 如何反转二维数组的行？
+**难度等级：**L2
+
+**问题：**反转二维数组arr的行。
+
+**给定：**
+
+```python
+# Input
+arr = np.arange(9).reshape(3,3)
+```
+
+**答案：**
+
+```python
+# Input
+arr = np.arange(9).reshape(3,3)
+```
+
+```python
+# Solution
+arr[::-1]
+array([[6, 7, 8],
+       [3, 4, 5],
+       [0, 1, 2]])
+```
+
+### 19. 如何反转二维数组的列？
+**难度等级：**L2
+
+**问题：**反转二维数组arr的列。
+
+**给定：**
+
+```python
+# Input
+arr = np.arange(9).reshape(3,3)
+```
+
+**答案：**
+
+```python
+# Input
+arr = np.arange(9).reshape(3,3)
+
+# Solution
+arr[:, ::-1]
+# > array([[2, 1, 0],
+# >        [5, 4, 3],
+# >        [8, 7, 6]])
+```
