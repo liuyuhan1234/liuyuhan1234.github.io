@@ -1,0 +1,145 @@
+---
+layout: post
+title:  "可视化分析"
+date:   2020-02-04 20:20:37 +0530
+categories: Numpy Python
+
+---
+## 可视化工具
+1.matplotlib [matplotlib](https://matplotlib.org/)
+2.seaborn （matplotlib的封装，可以方便绘图）[seaborn](http://seaborn.pydata.org/)
+3.plotly （绘制的表格可以用在网页中）
+
+
+## 柱状图
+柱状图的图形宽度没有意义，可以随便更改
+### 使用matplotlib
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+df=pd.read_csv("HR.csv")
+plt.title("SALARY") #表格题目
+plt.xlabel("salary") #x轴注释
+plt.ylabel("NUMBER") #y轴注释
+
+plt.axis([0,4,0,10000]) #限定显示范围（x轴最小，x轴最大，y轴最小，y轴最大）
+
+plt.bar(np.arange(len(df["salary"].value_counts()))+0.5,df["salary"].value_counts())
+
+for x,y in zip(np.arange(len(df["salary"].value_counts()))+0.5,df["salary"].value_counts()):
+    plt.text(x,y,y,ha="center",va="bottom")
+
+# 以上用于显示数字
+# zip函数定义标注位置和标注的数据
+
+plt.show()
+```
+
+### 使用seaborn
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+df=pd.read_csv("HR.csv")
+
+sns.set_style(style="darkgrid") #使用seaborn改表格背景可选参数(darkgrid、whitegrid、dark、white、ticks)
+sns.set_context(context="poster",font_scale=0.8) #更改字体，以及字体缩放
+sns.set_palette(sns.color_palette("RdBu",n_colors=7)) #调色盘
+
+sns.countplot(x="salary",data=df)
+
+plt.title("SALARY") #表格题目
+plt.xlabel("salary") #x轴注释
+plt.ylabel("NUMBER") #y轴注释
+```
+
+
+
+
+
+
+## 直方图
+直方图的宽度是有意义的
+### 使用seaborn
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+df=pd.read_csv("HR.csv")
+
+f=plt.figure(0)
+f.add_subplot(1,2,1) #子图1行2列的第1个
+sns.distplot(df["satisfaction_level"],bins=10,kde=False) #kde=False不显示分布图
+f.add_subplot(1,2,2) #子图1行2列的第2个
+sns.distplot(df["average_monthly_hours"],bins=10,hist=False) #hist=False不显示直方图
+plt.show()
+
+```
+
+
+
+
+
+## 箱线图
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+df=pd.read_csv("HR.csv")
+
+sns.boxplot(y=df["time_spend_company"], saturation=0.75)
+plt.show()
+```
+
+
+
+## 折线图
+一般用来展示数据的走势，所以横轴一般为时间
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+df=pd.read_csv("HR.csv")
+
+sub_df=df.groupby("time_spend_company").mean()
+sns.pointplot(x="time_spend_company",y="left",data=df)
+plt.show()
+```
+
+
+
+
+
+
+## 饼图
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+df=pd.read_csv("HR.csv")
+
+lbs = df["department"].value_counts().index
+explodes = [0.1 if i == "sales" else 0 for i in lbs]
+plt.pie(df["department"].value_counts(normalize=True), explode=explodes, autopct='%1.1f%%',
+        colors=sns.color_palette("Reds", n_colors=7), labels=df["department"].value_counts().index)
+plt.show()
+```
+
+
+
+
+
+
+
