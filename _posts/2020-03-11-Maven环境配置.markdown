@@ -1,0 +1,45 @@
+---
+layout: post
+title:  "Maven环境配置"
+date:   2020-03-11 08:20:37 +0530
+categories: Maven 
+
+---
+## 系统要求
+Maven 3.3 要求 JDK 1.7 或以上
+Maven 3.2 要求 JDK 1.6 或以上
+Maven 3.0/3.1 要求 JDK 1.5 或以上
+内存没有最低要求
+磁盘Maven 自身安装需要大约 10 MB 空间。除此之外，额外的磁盘空间将用于你的本地 Maven 仓库。你本地仓库的大小取决于使用情况，但预期至少 500 MB操作系统没有最低要求
+
+## Maven 下载
+Maven 下载地址：[http://maven.apache.org/download.cgi](http://maven.apache.org/download.cgi)
+
+
+
+## 设置 Maven 环境变量
+添加环境变量 MAVEN_HOME：
+
+Linux下载解压：
+tar -zxvf  apache-maven-3.3.9-bin.tar.gz
+sudo mv -f apache-maven-3.3.9 /usr/local/
+
+编辑 ~/.bash_profile 在文件末尾添加如下代码：
+
+```
+export MAVEN_HOME=/home/hadoop/app/apache-maven-3.6.1
+export PATH=${PATH}:${MAVEN_HOME}/bin
+```
+保存文件，并运行如下命令使环境变量生效：
+```
+source .bash_profile
+```
+在控制台输入如下命令，如果能看到 Maven 相关版本信息，则说明 Maven 已经安装成功：
+```
+mvn -v
+```
+
+## 阿里云maven仓库
+[
+https://www.runoob.com/maven/maven-repositories.html](
+https://www.runoob.com/maven/maven-repositories.html)
