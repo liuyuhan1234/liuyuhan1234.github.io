@@ -1,0 +1,120 @@
+---
+layout: post
+title:  "C++图的表示"
+date:   2020-03-11 08:25:37 +0530
+categories: C++ 数据结构
+
+---
+## 图的表示
+### 方法一：邻接矩阵（Adjacency Matrix）
+适合表示稠密图
+0表示不相连，1表示相连
+
+```c++
+#include <iostream>
+#include <vector>
+#include <cassert>
+using namespace std;
+
+//稠密图——邻接矩阵
+class DenserGraph{
+private:
+    int n,m; //存放图的点数和边数
+    bool directed; //标注是有向图还是无向图
+    vector<vector<bool>> g; //二维矩阵
+public:
+    DenserGraph(int n,bool directed){ //构造函数
+        this->n=n; //这个图的n就是传进来的n
+        this->m=0; //初始图的边数都为0
+        this->directed=directed; //这个图的directed就是传进来的directed
+
+        for(int i=0;i<n;i++)
+            g.push_back(vector<bool>(n, false)); //创建并初始化了矩阵
+
+    }
+    ~DenserGraph(){
+
+    }
+    int V(){  //返回点的方法
+        return n;
+    }
+    int E(){  //返回边的方法
+        return m;
+    }
+    void addEdge(int v,int w){  //添加一条边在v和w之间
+        assert(v>=0 && v<n); //判断v和w都不越界
+        assert(w>=0 && w<n);
+        if (hasEdge(v,w))
+            return;
+        g[v][w]= true;
+        if(!directed)
+            g[w][v]= true;
+        m++;
+    }
+    bool hasEdge(int v,int w){ //判断v和w之间本身是否以及有边
+        assert(v>=0 && v<n); //判断v和w都不越界
+        assert(w>=0 && w<n);
+        return g[v][w];
+    }
+
+};
+
+```
+
+
+
+
+
+### 方法二：邻接表（Adjacency Lists）
+适合表示稀疏图
+
+
+```c++
+#include <iostream>
+#include <vector>
+#include <cassert>
+using namespace std;
+
+//稀疏图——邻接表
+class SparserGraph{
+private:
+    int n,m;
+    bool directed;
+    vector<vector<int>> g;
+public:
+    SparserGraph(int n,bool directed){
+        this->n=n;
+        this->m=0;
+        this->directed=directed;
+        for(int i=0;i<n;i++)
+            g.push_back(vector<int>()); //创建并初始化了空的矩阵
+    }
+    ~SparserGraph(){
+
+    }
+    int V(){
+        return n;
+    }
+    int E(){
+        return m;
+    }
+    void addEdge(int v,int w){
+        assert(v>=0 && v<n); //判断v和w都不越界
+        assert(w>=0 && w<n);
+        g[v].push_back(w);
+        if(v!=w && !directed)
+            g[w].push_back(v);
+        m++;
+    }
+    bool hasEdge(int v,int w){
+        assert(v>=0 && v<n); //判断v和w都不越界
+        assert(w>=0 && w<n);
+
+        for(int i=0;i<g[v].size();i++)
+            if(g[v][i]==w)
+                return true;
+        return false;
+    }
+
+};
+```
