@@ -1,0 +1,197 @@
+---
+layout: post
+title:  "JAVA-GUI组件"
+date:   2020-03-31 08:20:37 +0530
+categories: JAVA GUI
+
+---
+# 
+
+java的图形界面中，容器是用来存放 按钮，输入框等组件的。
+窗体型容器有两个，一个是JFrame,一个是JDialog
+
+## JFrame
+
+JFrame是最常用的窗体型容器，默认情况下，在右上角有最大化最小化按钮
+![15be4e4c25d1f53132f8acfa5714b320.png](en-resource://database/28707:1)
+```java
+package gui;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
+public class TestGUI {
+	public static void main(String[] args) {
+		
+		//普通的窗体，带最大和最小化按钮
+		JFrame f = new JFrame("LoL");
+		f.setSize(400, 300);
+		f.setLocation(200, 200);
+		f.setLayout(null);
+		JButton b = new JButton("一键秒对方基地挂");
+		b.setBounds(50, 50, 280, 30);
+
+		f.add(b);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		f.setVisible(true);
+	}
+}
+
+```
+## JDialog
+
+JDialog也是窗体型容器，右上角没有最大和最小化按钮
+```java
+package gui;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+
+public class TestGUI {
+	public static void main(String[] args) {
+		
+		//普通的窗体，带最大和最小化按钮，而对话框却不带
+		JDialog d = new JDialog();
+		d.setTitle("LOL");
+		d.setSize(400, 300);
+		d.setLocation(200, 200);
+		d.setLayout(null);
+		JButton b = new JButton("一键秒对方基地挂");
+		b.setBounds(50, 50, 280, 30);
+
+		d.add(b);
+
+		d.setVisible(true);
+	}
+}
+
+```
+
+## 模态JDialog
+
+当一个对话框被设置为模态的时候，其背后的父窗体，是不能被激活的，除非该对话框被关闭
+```java
+package gui;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
+public class TestGUI {
+	public static void main(String[] args) {
+		JFrame f = new JFrame("外部窗体");
+		f.setSize(800, 600);
+		f.setLocation(100, 100);
+
+		// 根据外部窗体实例化JDialog
+		JDialog d = new JDialog(f);
+		// 设置为模态
+		d.setModal(true);
+
+		d.setTitle("模态的对话框");
+		d.setSize(400, 300);
+		d.setLocation(200, 200);
+		d.setLayout(null);
+		JButton b = new JButton("一键秒对方基地挂");
+		b.setBounds(50, 50, 280, 30);
+		d.add(b);
+
+		f.setVisible(true);
+		d.setVisible(true);
+
+	}
+}
+
+```
+
+## 窗体大小不可变化
+通过调用方法 setResizable(false); 做到窗体大小不可变化
+```java
+package gui;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
+public class TestGUI {
+	public static void main(String[] args) {
+
+		JFrame f = new JFrame("LoL");
+		f.setSize(400, 300);
+		f.setLocation(200, 200);
+		f.setLayout(null);
+		JButton b = new JButton("一键秒对方基地挂");
+		b.setBounds(50, 50, 280, 30);
+
+		f.add(b);
+		// 窗体大小不可变化
+		f.setResizable(false);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		f.setVisible(true);
+	}
+}
+
+```
+
+## 练习-模态与大小变化
+
+首先设计一个JFrame,上面有一个按钮，文字是 "打开一个模态窗口"。
+点击该按钮后，随即打开一个模态窗口。在这个模态窗口中有一个按钮，文本是 "锁定大小", 点击后，这个模态窗口的大小就被锁定住，不能改变。 再次点击，就回复能够改变大小
+![8a75fd389f46dea02df61c16994362e6.png](en-resource://database/28709:0)
+```java
+package gui;
+ 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+ 
+public class TestGUI {
+    public static void main(String[] args) {
+         
+        //普通的窗体，带最大和最小化按钮
+        JFrame f = new JFrame("LoL");
+        f.setSize(400, 300);
+        f.setLocation(200, 200);
+        f.setLayout(null);
+        JButton b = new JButton("打开一个模态窗口");
+        b.setBounds(50, 50, 280, 30);
+
+        b.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				JDialog d = new JDialog(f);
+				d.setTitle("这是一个模态窗口");
+				d.setModal(true);
+				d.setSize(200, 150);
+				d.setLocationRelativeTo(f);
+				
+				JButton b =new JButton("锁定大小");
+				d.add(b);
+				b.addActionListener(new ActionListener() {
+					boolean  resizable = false;
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						d.setResizable(resizable);
+						resizable = !resizable;
+						b.setText(resizable?"解锁大小":"锁定大小");
+					}
+				});
+				
+				d.setVisible(true);
+			}
+		});
+        
+        f.add(b);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+ 
+        f.setVisible(true);
+    }
+}
+
+```
