@@ -5,8 +5,6 @@ date:   2020-03-31 08:20:37 +0530
 categories: JAVA GUI
 
 ---
-# 
-
 java的图形界面中，容器是用来存放 按钮，输入框等组件的。
 窗体型容器有两个，一个是JFrame,一个是JDialog
 

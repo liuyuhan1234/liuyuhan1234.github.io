@@ -7,6 +7,7 @@ categories: IDEA 插件
 ---
 
 [https://www.jianshu.com/p/68babcf5a4ad](https://www.jianshu.com/p/68babcf5a4ad)
+
 ## 简介 & 安装
 
 开发项目过程中，会有很多的 pojo. pojo 又叫做 javabean,bean,entity 等等，都是他。
